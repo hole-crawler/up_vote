@@ -29,6 +29,7 @@ max_pid = r.json()['data'][0]['pid']
 with open('reaction_log.json','r')as f:
     data = json.load(f)
     last_react = data["last_react"]
+    times = data["times"]
 try:
     for pid in tqdm.tqdm(range(last_react,max_pid+1)):
         url = f'https://t-hole.red/_api/v2/post/{pid}/reaction'
@@ -41,4 +42,5 @@ else:
     data["last_react"] = max_pid
 
 with open('reaction_log.json','wb+')as f:
+    data["times"] = times + 1
     f.write(json.dumps(data,ensure_ascii=False).encode('utf-8'))
