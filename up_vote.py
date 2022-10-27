@@ -25,22 +25,30 @@ def user_agent()->str:
 
 HEADERS = {'User-Token':'NehxnEaRAVqnfpeF','user-agent':user_agent()}
 r = requests.get('https://t-hole.red/_api/v1/getlist?p=1&order_mode=0',headers=HEADERS)
-max_pid = r.json()['data'][0]['pid']
-with open('reaction_log.json','r')as f:
-    data = json.load(f)
-    last_react = data["last_react"]
-    times = data["times"]
 try:
-    for pid in tqdm.tqdm(range(last_react,max_pid+1)):
-        url = f'https://t-hole.red/_api/v2/post/{pid}/reaction'
-        header = {'user-token':"NehxnEaRAVqnfpeF","user-agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.163 Safari/535.1"}
-        dat = {'status':'1'}
-        r = requests.post(url,headers=header,data=dat)
-except:
-    data["last_react"] = pid-1
-else:
-    data["last_react"] = max_pid
+    max_pid = r.json()['data'][0]['pid']
+    with open('reaction_log.json','r')as f:
+        data = json.load(f)
+        last_react = data["last_react"]
+        times = data["times"]
+    try:
+        for pid in tqdm.tqdm(range(last_react,max_pid+1)):
+            url = f'https://t-hole.red/_api/v2/post/{pid}/reaction'
+            header = {'user-token':"NehxnEaRAVqnfpeF","user-agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.163 Safari/535.1"}
+            dat = {'status':'1'}
+            r = requests.post(url,headers=header,data=dat)
+    except:
+        data["last_react"] = pid-1
+    else:
+        data["last_react"] = max_pid
 
-with open('reaction_log.json','wb+')as f:
-    data["times"] = times + 1
-    f.write(json.dumps(data,ensure_ascii=False).encode('utf-8'))
+    with open('reaction_log.json','wb+')as f:
+        data["times"] = times + 1
+        f.write(json.dumps(data,ensure_ascii=False).encode('utf-8'))
+except:
+    with open('reaction_log.json','r')as f:
+        data = json.load(f)
+        times = data["times"]
+    with open('reaction_log.json','wb+')as f:
+        data["times"] = times + 1
+        f.write(json.dumps(data,ensure_ascii=False).encode('utf-8'))
